@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SHOHIN TAJIKISTAN — Карта Душанбе</title>
+<meta name="theme-color" content="#071c16">
+
+<!-- LEAFLET CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+    --bg: #f3f6f4;
+    --white: #fff;
+    --dark: #071c16;
+    --lime: #baf05b;
+    --text: #10241c;
+    --line: #e5ece8;
+    --card-bg: #fff;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding-bottom: 25px;
+}
+
+.header {
+    background: linear-gradient(145deg, #061611, #0c3b2a);
+    color: white;
+    padding: 16px 15px 23px;
+    border-radius: 0 0 31px 31px;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-mark {
+    width: 45px;
+    height: 45px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, var(--lime), #43ca89);
+    color: #082217;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 22px;
+}
+
+.brand-name {
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.brand-sub {
+    font-size: 9px;
+    opacity: .55;
+    margin-top: 3px;
+}
+
+.search-wrap {
+    margin-top: 20px;
+}
+
+.search {
+    height: 54px;
+    background: var(--white);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.15);
+}
+
+.search-icon {
+    width: 40px;
+    text-align: center;
+    color: #7d8984;
+    font-size: 18px;
+}
+
+.search input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    font-size: 13px;
+    background: transparent;
+    color: var(--text);
+}
+
+.search-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--dark);
+    color: white;
+    font-size: 16px;
+    border: 0;
+    cursor: pointer;
+}
+
+.container {
+    width: 100%;
+    max-width: 920px;
+    margin: auto;
+    padding: 20px 15px;
+}
+
+.section {
+    margin-bottom: 25px;
+}
+
+.section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+#realMap {
+    width: 100%;
+    height: 450px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(10,60,40,.1);
+    border: 1px solid var(--line);
+    z-index: 1;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.cat {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    min-height: 85px;
+    padding: 10px 5px;
+    text-align: center;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.cat-icon {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.cat-name {
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.quick-btns {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.quick-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--dark);
+    color: white;
+    font-size: 12px;
+    font-weight: 900;
+    text-align: center;
+    cursor: pointer;
+    border: 0;
+}
+
+.quick-btn.secondary {
+    background: var(--card-bg);
+    color: var(--text);
+    border: 1px solid var(--line);
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="topbar">
+        <div class="brand">
+            <div class="brand-mark">S</div>
+            <div>
+                <div class="brand-name">SHOHIN TAJIKISTAN</div>
+                <div class="brand-sub">КАРТА СТОЛИЦЫ И ОБЪЕКТОВ</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="search-wrap">
+        <div class="search">
+            <div class="search-icon">⌕</div>
+            <input id="searchInput" type="search" placeholder="Поиск по заведениям, дорогам..." oninput="filterObjects()">
+            <button class="search-btn" onclick="filterObjects()">↗</button>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="quick-btns">
+        <button class="quick-btn" onclick="locateUser()">⌖ Мое местоположение</button>
+        <button class="quick-btn secondary" onclick="resetMapView()">🗺 Весь город</button>
+    </div>
+
+    <!-- КАТЕГОРИИ -->
+    <section class="section">
+        <div class="section-head">
+            <div class="section-title">Категории</div>
+        </div>
+        <div class="category-grid">
+            <button class="cat" onclick="filterCategory('Еда')"><div class="cat-icon">🍽️</div><div class="cat-name">Еда</div></button>
+            <button class="cat" onclick="filterCategory('Дороги')"><div class="cat-icon">🛣️</div><div class="cat-name">Дороги</div></button>
+            <button class="cat" onclick="filterCategory('Магазины')"><div class="cat-icon">🛒</div><div class="cat-name">Магазины</div></button>
+            <button class="cat" onclick="filterCategory('Аптеки')"><div class="cat-icon">💊</div><div class="cat-name">Аптеки</div></button>
+        </div>
+    </section>
+
+    <!-- РАБОЧАЯ КАРТА -->
+    <section class="section">
+        <div class="section-head">
+            <div class="section-title">Интерактивная карта</div>
+        </div>
+        <div id="realMap"></div>
+    </section>
+
+</main>
+
+<!-- LEAFLET JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+// Координаты центра Душанбе
+const DUSHANBE_CENTER = [38.5735, 68.7864];
+
+// Настоящие объекты, заведения и дороги Душанбе
+const dushanbeObjects = [
+    { name: "Чайхана «Рохат»", type: "Еда", lat: 38.5721, lng: 68.7852, desc: "Легендарная столичная чайхана на проспекте Рудаки." },
+    { name: "Ресторан «Мриори»", type: "Еда", lat: 38.5670, lng: 68.7790, desc: "Популярное заведение с национальной и европейской кухней." },
+    { name: "Café Caffa", type: "Еда", lat: 38.5755, lng: 68.7810, desc: "Уютная кофейня в центре города." },
+    { name: "Сеть фастфуда «Oqtepa»", type: "Еда", lat: 38.5590, lng: 68.7915, desc: "Популярный быстрый перекус и лаваши." },
+
+    { name: "Проспект Рудаки", type: "Дороги", lat: 38.5750, lng: 68.7800, desc: "Главная транспортная артерия Душанбе." },
+    { name: "Проспект Исмоили Сомони", type: "Дороги", lat: 38.5795, lng: 68.7750, desc: "Важная дорога, ведущая к парку Победы." },
+    { name: "Улица Айни", type: "Дороги", lat: 38.5580, lng: 68.7930, desc: "Крупная улица, соединяющая центр с южной частью и аэропортом." },
+    { name: "Проспект Сино", type: "Дороги", lat: 38.5520, lng: 68.7610, desc: "Проспект в западном районе города." },
+
+    { name: "ТЦ «Садбарг»", type: "Магазины", lat: 38.5630, lng: 68.7885, desc: "Известный торговый центр и рынок одежды." },
+    { name: "Гипермаркет «Ашан» (Сиёма Мол)", type: "Магазины", lat: 38.5450, lng: 68.7950, desc: "Крупнейший торговый молл столицы." },
+    { name: "Рынок «Корвон»", type: "Магазины", lat: 38.5190, lng: 68.8020, desc: "Самый крупный вещевой рынок города." },
+    { name: "ТЦ «Пойтахт-99»", type: "Магазины", lat: 38.5780, lng: 68.7890, desc: "Торговый центр в центре столицы." },
+
+    { name: "Аптека «Авиценна»", type: "Аптеки", lat: 38.5705, lng: 68.7825, desc: "Центральная круглосуточная аптека." },
+    { name: "Аптека «Саломат»", type: "Аптеки", lat: 38.5740, lng: 68.7760, desc: "Широкий ассортимент медикаментов." },
+    { name: "Аптека №1", type: "Аптеки", lat: 38.5620, lng: 68.7890, desc: "Популярный аптечный пункт около Садбарга." }
+];
+
+let map = null;
+let markers = {};
+
+function initMap() {
+    if (map !== null) return;
+    
+    map = L.map('realMap').setView(DUSHANBE_CENTER, 13);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    renderMarkers(dushanbeObjects);
+}
+
+function renderMarkers(items) {
+    for (let id in markers) {
+        map.removeLayer(markers[id]);
+    }
+    markers = {};
+
+    items.forEach((obj, index) => {
+        let marker = L.marker([obj.lat, obj.lng]).addTo(map);
+        marker.bindPopup(`
+            <div style="font-family:Arial; min-width:160px;">
+                <b style="font-size:13px;">${obj.name}</b><br>
+                <span style="color:#087b53; font-size:11px;">📌 ${obj.type}</span><br>
+                <p style="font-size:11px; color:#555; margin-top:4px;">${obj.desc}</p>
+            </div>
+        `);
+        markers[index] = marker;
+    });
+}
+
+function filterObjects() {
+    let query = document.getElementById('searchInput').value.toLowerCase().trim();
+    if (!query) {
+        renderMarkers(dushanbeObjects);
+        return;
+    }
+    let filtered = dushanbeObjects.filter(o => 
+        o.name.toLowerCase().includes(query) || 
+        o.type.toLowerCase().includes(query) || 
+        o.desc.toLowerCase().includes(query)
+    );
+    renderMarkers(filtered);
+    if (filtered.length > 0) {
+        map.setView([filtered[0].lat, filtered[0].lng], 14);
+    }
+}
+
+function filterCategory(catType) {
+    let filtered = dushanbeObjects.filter(o => o.type === catType);
+    renderMarkers(filtered);
+    if (filtered.length > 0) {
+        map.setView([filtered[0].lat, filtered[0].lng], 14);
+    }
+}
+
+function resetMapView() {
+    map.setView(DUSHANBE_CENTER, 13);
+    renderMarkers(dushanbeObjects);
+}
+
+function locateUser() {
+    if (!navigator.geolocation) {
+        alert("GPS не поддерживается");
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(position => {
+        let lat = position.coords.latitude;
+        let lng = position.coords.longitude;
+        map.setView([lat, lng], 15);
+        L.circleMarker([lat, lng], { radius: 10, color: "#fff", weight: 3, fillColor: "#071c16", fillOpacity: 1 })
+            .addTo(map)
+            .bindPopup("📍 Вы здесь")
+            .openPopup();
+    }, () => {
+        alert("Не удалось определить геолокацию.");
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    initMap();
+});
+</script>
+
+</body>
+</html>
