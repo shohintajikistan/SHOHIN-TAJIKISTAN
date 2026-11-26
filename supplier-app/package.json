@@ -1,0 +1,17 @@
+{
+  "name": "shohin-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SHOHIN supplier and ordering app",
+  "scripts": {
+    "build": "mkdir -p www && cp index.html www/index.html",
+    "android:prepare": "npm run build && npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  }
+}
