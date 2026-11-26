@@ -1,0 +1,8 @@
+{
+  "appId": "tj.shohin.app",
+  "appName": "SHOHIN",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
