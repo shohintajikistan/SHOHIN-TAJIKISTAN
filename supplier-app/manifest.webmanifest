@@ -1,0 +1,19 @@
+{
+  "name": "SHOHIN — Поставщики и заказы",
+  "short_name": "SHOHIN",
+  "description": "Офлайн-помощник продуктового магазина для работы с поставщиками и заказами",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#102f68",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
