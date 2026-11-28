@@ -4,7 +4,7 @@
   "private": true,
   "description": "SHOHIN supplier and ordering app",
   "scripts": {
-    "build": "mkdir -p www && cp index.html www/index.html",
+    "build": "mkdir -p www && cp index.html manifest.webmanifest sw.js icon.svg www/",
     "android:prepare": "npm run build && npx cap sync android"
   },
   "dependencies": {
